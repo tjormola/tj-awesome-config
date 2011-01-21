@@ -1,0 +1,48 @@
+require('delightful.widgets.cpu')
+require('delightful.widgets.datetime')
+require('delightful.widgets.imap')
+require('delightful.widgets.memory')
+require('delightful.widgets.network')
+require('delightful.widgets.pulseaudio')
+require('delightful.widgets.weather')
+
+install_delightful = {
+	delightful.widgets.network,
+	delightful.widgets.cpu,
+	delightful.widgets.memory,
+	delightful.widgets.weather,
+	delightful.widgets.imap,
+	delightful.widgets.pulseaudio,
+	delightful.widgets.datetime
+}
+
+delightful_config = {
+	[delightful.widgets.cpu] = {
+		command = 'gnome-system-monitor',
+	},
+	[delightful.widgets.imap] = {
+		{
+			user      = 'myuser',
+			password  = 'myasswd',
+			host      = 'mail.example.com',
+			ssl       = true,
+			mailboxes = { 'INBOX', 'somemailbox' },
+			command   = 'evolution -c mail',
+		},
+	},
+	[delightful.widgets.memory] = {
+		command = 'gnome-system-monitor',
+	},
+	[delightful.widgets.network] = {
+		excluded_devices = '^eth1$',
+	},
+	[delightful.widgets.weather] = {
+		{
+			city = 'Helsinki',
+			command = 'gnome-www-browser http://ilmatieteenlaitos.fi/saa/Helsinki',
+		},
+	},
+	[delightful.widgets.pulseaudio] = {
+		mixer_command = mixer_cmd,
+	},
+}
