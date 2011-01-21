@@ -1,3 +1,6 @@
 [submodule "submodules/delightful"]
 	path = submodules/delightful
 	url = git://scm.solitudo.net/delightful.git
+[submodule "submodules/tj-awesome-themes"]
+	path = submodules/tj-awesome-themes
+	url = git://scm.solitudo.net/tj-awesome-themes.git
