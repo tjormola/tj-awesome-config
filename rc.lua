@@ -217,7 +217,7 @@ tasklist.buttons = awful.util.table.join(
 local main_menu = awful.menu.new({ items = top_menu, width = 150 })
 local wibox      = {}
 local layoutbox  = {}
-local prompt_box = {}
+local promptbox = {}
 local launcher   = awful.widget.launcher({ image = image(beautiful.awesome_icon), menu = main_menu })
 local systray    = widget({ type = 'systray'                     })
 local spacer     = widget({ type = 'textbox', name = 'spacer'    })
@@ -226,7 +226,7 @@ spacer.text      = ' '
 separator.text   = '|'
 
 for s = 1, screen.count() do
-	prompt_box[s] = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
+	promptbox[s] = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
 
 	layoutbox[s] = awful.widget.layoutbox(s)
 	layoutbox[s]:buttons(awful.util.table.join(
@@ -250,7 +250,7 @@ for s = 1, screen.count() do
 		{
 			launcher,
 			taglist[s],
-			prompt_box[s],
+			promptbox[s],
 			spacer,
 			layout = awful.widget.layout.horizontal.leftright
 		},
@@ -335,7 +335,7 @@ local globalkeys = awful.util.table.join(
 		awful.key({ modkey, 'Shift'   }, 'q',      awesome.quit                                              ),
 
 		awful.key({ modkey,           }, 'l',      function() awful.tag.incmwfact( 0.05)                  end),
-		awful.key({ modkey,           }, 'h',      function() awful.tag.incmwfact(-0.05)                  end),
+		awful.key({ modkey,           }, 'h',      function() awful.tag.incmwfact(-0.05)            on all machines.      end),
 		awful.key({ modkey, 'Shift'   }, 'h',      function() awful.tag.incnmaster( 1)                    end),
 		awful.key({ modkey, 'Shift'   }, 'l',      function() awful.tag.incnmaster(-1)                    end),
 		awful.key({ modkey, 'Control' }, 'h',      function() awful.tag.incncol( 1)                       end),
@@ -344,7 +344,7 @@ local globalkeys = awful.util.table.join(
 		awful.key({ modkey, 'Shift'   }, 'space',  function() awful.layout.inc(layouts, -1)               end),
 
 		-- Prompt
-		awful.key({ modkey },            'r',      function() prompt_box[mouse.screen]:run()              end)
+		awful.key({ modkey },            'r',      function() promptbox[mouse.screen]:run()              end)
 )
 
 local clientkeys = awful.util.table.join(
