@@ -4,3 +4,6 @@
 [submodule "submodules/tj-awesome-themes"]
 	path = submodules/tj-awesome-themes
 	url = git://scm.solitudo.net/tj-awesome-themes.git
+[submodule "submodules/mdwn2text"]
+	path = submodules/mdwn2text
+	url = git://scm.solitudo.net/mdwn2text.git
