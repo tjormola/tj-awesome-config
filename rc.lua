@@ -1,3 +1,17 @@
+-- Configuration for Awesome 3.4
+-- Copyright (C) 2011 Tuomas Jormola <tj@solitudo.net>
+--
+-- Licensed under the terms of GNU General Public License Version 2.0.
+--
+-- Features (see README for more detailed descriptions):
+--
+--    - awesome-freedesktop based menus
+--    - Symlink based autostarting of applications
+--    - Additional host specific configuration
+--    - Wibox with Delightful support
+--    - Almost default key bindings
+--    - Floating mode rules for many applications
+
 require('posix')
 require('awful')
 require('awful.autofocus')
