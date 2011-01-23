@@ -1,3 +1,12 @@
+-- You can use this as a template for an additional host specific
+-- configuration file which is sources by the main rc.lua.
+--
+-- Run
+--
+-- cp ~/.config/awesome/rc.HOSTNAME.lua.sample ~/.config/awesome/rc.$HOSTNAME.lua
+--
+-- and edit this file to suit your needs.
+
 require('delightful.widgets.cpu')
 require('delightful.widgets.datetime')
 require('delightful.widgets.imap')
