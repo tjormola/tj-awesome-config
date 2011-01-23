@@ -1,7 +1,7 @@
 # My configuration for Awesome
 
-This distribution my configuration for [Awesome](http://awesome.naquadah.org)
-window manager.
+This distribution includes my configuration for
+[Awesome](http://awesome.naquadah.org) window manager.
 
 Home page for the Awesome configuration is at
 <http://solitudo.net/software/awesome/config/>. The configuration is also listed at the
