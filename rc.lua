@@ -41,6 +41,7 @@ mixer_cmd                  = mixer
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = 'Mod4'
 
+wibox_position = 'top'
 tagnum = 4
 
 -- Autostart
@@ -259,7 +260,7 @@ for s = 1, screen.count() do
 			tasklist.buttons
 	)
 
-	wibox[s] = awful.wibox({ position = 'top', screen = s })
+	wibox[s] = awful.wibox({ position = wibox_position, screen = s })
 	local widgets_front = {
 		{
 			launcher,
