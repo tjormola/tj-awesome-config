@@ -473,6 +473,10 @@ awful.rules.rules = {
 		properties = { floating     = true        }
 	},
 	{
+		rule       = { class        = 'jive'      },
+		properties = { floating     = true        }
+	},
+	{
 		rule       = { class        = 'Rhythmbox' },
 		properties = { floating     = true        }
 	},
