@@ -473,6 +473,10 @@ awful.rules.rules = {
 		properties = { floating     = true        }
 	},
 	{
+		rule       = { class        = 'xbmc.bin'  },
+		properties = { floating     = true        }
+	},
+	{
 		rule       = { class        = 'jive'      },
 		properties = { floating     = true        }
 	},
