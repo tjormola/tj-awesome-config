@@ -102,7 +102,7 @@ for _, xdg_autostart_dir in pairs(xdg_autostart_dirs) do
 					local key, value
 					line:gsub('^([^%s=]+)%s*=%s*(.+)%s*$', function(a, b) key = a:lower() value = b end)
 					if section and key and key == 'exec' then
-						commands[section]['command'] = value
+						commands[section]['command'] = value:gsub('%%.', ''):gsub('%s+$', '')
 					elseif section and key and key == 'autostartcondition' then
 						local condition = false
 						local condition_method, condition_args
