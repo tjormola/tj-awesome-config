@@ -45,27 +45,83 @@ wibox_position = 'top'
 tagnum = 4
 
 -- Autostart
+function resolve_symlink(file, level)
+	if not level then
+		level = -1
+	end
+	local file_stat = posix.stat(file)
+	if level ~= 0 and file_stat and file_stat.type == 'link' then
+		local readlink_output = awful.util.pread(string.format('readlink %s', file)):gsub('%s*$', '')
+		return resolve_symlink(readlink_output, level - 1)
+	end
+
+	return file
+end
+
+function launch_command(command)
+	local basename = command:gsub('^.*/', ''):gsub('%s+.*$', '')
+	awful.util.spawn_with_shell(string.format('pgrep -u $USER -f "%s$" >/dev/null || (%s &)', basename, command))
+end
+
+local autostart_table = {}
+
+-- Awesome autostart directory
 local autostart_dir = string.format('%s/autostart', awful.util.getdir('config'))
 local autostart_stat = posix.stat(autostart_dir)
 if autostart_stat and autostart_stat.type == 'directory' then
 	local files = posix.dir(autostart_dir)
 	if files then
 		for _, file in pairs(files) do
-			local full_file = string.format('%s/%s', autostart_dir, file)
+			local full_file = resolve_symlink(string.format('%s/%s', autostart_dir, file), 1)
 			local file_stat = posix.stat(full_file)
-			if file_stat and (file_stat.type == 'regular' or file_stat.type == 'link') then
-				local command = full_file
-				if file_stat.type == 'link' then
-					local readlink_output = awful.util.pread(string.format('readlink %s', full_file))
-					command = readlink_output:gsub('%s*$', '')
+			if file_stat and file_stat.type == 'regular' then
+				autostart_table[full_file] = full_file
+			end
+		end
+	end
+end
+-- XDG autostart
+local xdg_autostart_dirs = { string.format('%s/.config/autostart', os.getenv('HOME')), '/etc/xdg/autostart' }
+for _, xdg_autostart_dir in pairs(xdg_autostart_dirs) do
+	local xdg_autostart_stat = posix.stat(xdg_autostart_dir)
+	if xdg_autostart_stat and xdg_autostart_stat.type == 'directory' then
+		local xdg_autostart_dirs = posix.dir(xdg_autostart_dir)
+		for _, xdg_autostart_name in pairs(xdg_autostart_dirs) do
+			local xdg_autostart_file = string.format('%s/%s', xdg_autostart_dir, xdg_autostart_name)
+			local xdg_autostart_file_stat = posix.stat(resolve_symlink(xdg_autostart_file))
+			if xdg_autostart_file_stat and xdg_autostart_file_stat.type == 'regular' and xdg_autostart_name:find('\.desktop$') then
+				local command
+				local condition_ok = true
+				for line in io.lines(xdg_autostart_file) do
+					local key, value
+					line:gsub('^([^%s=]+)%s*=%s*(.+)%s*$', function(a, b) key = a:lower() value = b end)
+					if key and key == 'exec' then
+						command = value
+					elseif key and key == 'autostartcondition' then
+						condition_ok = false
+						local condition_method, condition_args
+						value:gsub('^([^%s]+)%s+(.+)$', function(a, b) condition_method = a:lower() condition_args = b end)
+						if condition_method and condition_args and condition_method == 'gsettings' then
+							local gsettings_output = awful.util.pread(string.format('gsettings get %s', condition_args)):gsub('%s*$', '')
+							condtion_ok = gsettings_output and gsettings_output == 'true'
+						elseif condition_method and condition_args and condition_method == 'gnome' then
+							local gconftool_output = awful.util.pread(string.format('gconftool --get %s', condition_args)):gsub('%s*$', '')
+							condtion_ok = gconftool_output and gconftool_output == 'true'
+						elseif condition_method and condition_args and condition_method == 'gnome3' then -- ignore
+						else
+							print(string.format('[awesome] Unknown AutostartCondition method: %s', condition_method))
+						end
+					end
 				end
-				local basename = command:gsub('^.*/', '')
-				if command then
-					awful.util.spawn_with_shell(string.format('pgrep -u $USER -f "%s$" >/dev/null || ("%s" &)', basename, command))
+				if condition_ok and command then
+					autostart_table[command] = 1
 				end
 			end
 		end
 	end
+end
+for command in pairs(autostart_table) do
+	launch_command(command)
 end
 
 -- Themes
