@@ -63,7 +63,7 @@ function launch_command(command)
 	awful.util.spawn_with_shell(string.format('pgrep -u $USER -f "%s$" >/dev/null || (%s &)', basename, command))
 end
 
-local autostart_table = {}
+local autostart_commands = {}
 
 -- Awesome autostart directory
 local autostart_dir = string.format('%s/autostart', awful.util.getdir('config'))
@@ -75,7 +75,7 @@ if autostart_stat and autostart_stat.type == 'directory' then
 			local full_file = resolve_symlink(string.format('%s/%s', autostart_dir, file), 1)
 			local file_stat = posix.stat(full_file)
 			if file_stat and file_stat.type == 'regular' then
-				autostart_table[full_file] = full_file
+				autostart_commands[full_file] = full_file
 			end
 		end
 	end
@@ -90,37 +90,48 @@ for _, xdg_autostart_dir in pairs(xdg_autostart_dirs) do
 			local xdg_autostart_file = string.format('%s/%s', xdg_autostart_dir, xdg_autostart_name)
 			local xdg_autostart_file_stat = posix.stat(resolve_symlink(xdg_autostart_file))
 			if xdg_autostart_file_stat and xdg_autostart_file_stat.type == 'regular' and xdg_autostart_name:find('\.desktop$') then
-				local command
-				local condition_ok = true
+				local section
+				local commands = {}
 				for line in io.lines(xdg_autostart_file) do
+					local new_section
+					line:gsub('^%[([^%]]+)%]$', function(a) new_section = a:lower() end)
+					if (not section and new_section) or (new_section and section and section ~= new_section) then
+						section = new_section
+						commands[section] = { condition = true }
+					end
 					local key, value
 					line:gsub('^([^%s=]+)%s*=%s*(.+)%s*$', function(a, b) key = a:lower() value = b end)
-					if key and key == 'exec' then
-						command = value
-					elseif key and key == 'autostartcondition' then
-						condition_ok = false
+					if section and key and key == 'exec' then
+						commands[section]['command'] = value
+					elseif section and key and key == 'autostartcondition' then
+						local condition = false
 						local condition_method, condition_args
 						value:gsub('^([^%s]+)%s+(.+)$', function(a, b) condition_method = a:lower() condition_args = b end)
 						if condition_method and condition_args and condition_method == 'gsettings' then
 							local gsettings_output = awful.util.pread(string.format('gsettings get %s', condition_args)):gsub('%s*$', '')
-							condtion_ok = gsettings_output and gsettings_output == 'true'
+							condition = gsettings_output and gsettings_output == 'true'
 						elseif condition_method and condition_args and condition_method == 'gnome' then
 							local gconftool_output = awful.util.pread(string.format('gconftool --get %s', condition_args)):gsub('%s*$', '')
-							condtion_ok = gconftool_output and gconftool_output == 'true'
+							condtion = gconftool_output and gconftool_output == 'true'
 						elseif condition_method and condition_args and condition_method == 'gnome3' then -- ignore
 						else
 							print(string.format('[awesome] Unknown AutostartCondition method: %s', condition_method))
 						end
+						commands[section]['condition'] = condition
 					end
 				end
-				if condition_ok and command then
-					autostart_table[command] = 1
+				local try_sections = { 'desktop action tray', 'desktop entry' }
+				for _, try_section in pairs(try_sections) do
+					if commands[try_section] and commands[try_section]['command'] and commands[try_section]['condition'] then
+						autostart_commands[commands[try_section]['command']] = 1
+						break
+					end
 				end
 			end
 		end
 	end
 end
-for command in pairs(autostart_table) do
+for command in pairs(autostart_commands) do
 	launch_command(command)
 end
 
