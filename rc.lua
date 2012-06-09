@@ -536,6 +536,10 @@ awful.rules.rules = {
 		properties = { floating     = true        }
 	},
 	{
+		rule       = { class        = 'mplayer2'  },
+		properties = { floating     = true        }
+	},
+	{
 		rule       = { class        = 'Vlc'       },
 		properties = { floating     = true        }
 	},
