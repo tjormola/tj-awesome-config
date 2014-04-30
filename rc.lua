@@ -579,6 +579,14 @@ awful.rules.rules = {
 		rule       = { class        = 'Vncviewer' },
 		properties = { floating     = true        }
 	},
+	{
+		rule       = { class        = 'Steam'     },
+		properties = { floating     = true        }
+	},
+	{
+		rule       = { name         = 'gst-launch-1.0'     },
+		properties = { floating     = true        }
+	},
 }
 -- Add host rules
 if host_rules then
