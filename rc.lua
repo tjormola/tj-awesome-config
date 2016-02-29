@@ -538,11 +538,19 @@ awful.rules.rules = {
 		properties = { floating     = true        }
 	},
 	{
+		rule       = { class        = 'mpv'  },
+		properties = { floating     = true        }
+	},
+	{
 		rule       = { class        = 'Vlc'       },
 		properties = { floating     = true        }
 	},
 	{
 		rule       = { class        = 'xbmc.bin'  },
+		properties = { floating     = true        }
+	},
+	{
+		rule       = { class        = 'Kodi'      },
 		properties = { floating     = true        }
 	},
 	{
@@ -582,7 +590,7 @@ awful.rules.rules = {
 		properties = { floating     = true        }
 	},
 	{
-		rule       = { name         = 'gst-launch-1.0'     },
+		rule       = { name         = 'gst-launch-1.0' },
 		properties = { floating     = true        }
 	},
 }
