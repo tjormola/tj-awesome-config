@@ -1,5 +1,5 @@
--- Configuration for Awesome 3.4
--- Copyright (C) 2011 Tuomas Jormola <tj@solitudo.net>
+-- Configuration for Awesome 3.5
+-- Copyright (C) 2011-2016 Tuomas Jormola <tj@solitudo.net>
 --
 -- Licensed under the terms of GNU General Public License Version 2.0.
 --
@@ -12,15 +12,16 @@
 --    - Almost default key bindings
 --    - Floating mode rules for many applications
 
-require('posix')
-require('awful')
-require('awful.autofocus')
-require('awful.rules')
+local posix       = require('posix')
+local awful       = require('awful')
+awful.autofocus   = require('awful.autofocus')
+awful.rules       = require('awful.rules')
+local beautiful   = require('beautiful')
+local wibox       = require('wibox')
 
-require('freedesktop.utils')
-require('freedesktop.menu')
+local freedesktop = { utils = require('freedesktop.utils'), menu = require('freedesktop.menu') }
 
-require('debian.menu')
+local debian      = { menu = require('debian.menu') }
 
 -- Variable definitions
 
@@ -31,7 +32,7 @@ editor                     = os.getenv('EDITOR') or 'editor'
 editor_cmd                 = string.format('%s -e %s', terminal, editor)
 mailer                     = 'mutt'
 mailer_cmd                 = string.format('%s -e %s', terminal, mailer)
-mixer                      = 'gnome-volume-control'
+mixer                      = 'pavucontrol'
 mixer_cmd                  = mixer
 
 -- Default modkey.
@@ -191,7 +192,7 @@ local awesome_menu = {
 top_menu = {
 	{ 'Applications', freedesktop.menu.new(),          freedesktop.utils.lookup_icon({ icon = 'start-here'                }) },
 	{ 'Debian',       debian.menu.Debian_menu.Debian,  freedesktop.utils.lookup_icon({ icon = 'debian-logo'               }) },
-	{ 'Awesome',      awesome_menu,                    beautiful.awesome_icon },
+	{ 'Awesome',      awesome_menu,                    beautiful.awesome_icon                                                },
 	{ 'System',       system_menu,                     freedesktop.utils.lookup_icon({ icon = 'system'                    }) },
 	{ 'Terminal',     freedesktop.utils.terminal,      freedesktop.utils.lookup_icon({ icon = 'terminal'                  }) }
 }
@@ -222,7 +223,7 @@ for s = 1, screen.count() do
 	tags[s] = awful.tag(tagtable, s, layouts[4])
 end
 
--- Local local config file
+-- Local config file
 local hostname = awful.util.pread('hostname -s'):gsub('\n', '')
 local host_config_file = awful.util.getdir('config') .. '/rc.' .. hostname .. '.lua'
 if awful.util.file_readable(host_config_file) then
@@ -236,19 +237,6 @@ if awful.util.file_readable(host_config_file) then
 end
 
 -- Wibox
-local delightful_container = { widgets = {}, icons = {} }
-if install_delightful then
-	for _, widget in pairs(awful.util.table.reverse(install_delightful)) do
-		local config = delightful_config and delightful_config[widget]
-		local widgets, icons = widget:load(config)
-		if not icons then
-			icons = {}
-		end
-		table.insert(delightful_container.widgets, awful.util.table.reverse(widgets))
-		table.insert(delightful_container.icons,   awful.util.table.reverse(icons))
-	end
-end
-
 local taglist = {}
 taglist.buttons = awful.util.table.join(
 		awful.button({        }, 1, awful.tag.viewonly    ),
@@ -275,7 +263,7 @@ tasklist.buttons = awful.util.table.join(
 					instance:hide()
 					instance = nil
 				else
-					instance = awful.menu.clients({ width = 250 })
+					instance = awful.menu.clients({ theme = { width = 250 }})
 				end
 			end),
 		 awful.button({ }, 4,
@@ -294,19 +282,15 @@ tasklist.buttons = awful.util.table.join(
 		end)
 )
 
-local main_menu = awful.menu.new({ items = top_menu, width = 150 })
-local wibox      = {}
+local main_menu = awful.menu.new({ items = top_menu, theme = { width = 150 }})
+local wibox_     = {}
 local layoutbox  = {}
-local promptbox = {}
-local launcher   = awful.widget.launcher({ image = image(beautiful.awesome_icon), menu = main_menu })
-local systray    = widget({ type = 'systray'                     })
-local spacer     = widget({ type = 'textbox', name = 'spacer'    })
-local separator  = widget({ type = 'textbox', name = 'separator' })
-spacer.text      = ' '
-separator.text   = '|'
+local promptbox  = {}
+local launcher   = awful.widget.launcher({ image = beautiful.awesome_icon, menu = main_menu })
+local systray    = wibox.widget.systray()
 
 for s = 1, screen.count() do
-	promptbox[s] = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
+	promptbox[s] = awful.widget.prompt()
 
 	layoutbox[s] = awful.widget.layoutbox(s)
 	layoutbox[s]:buttons(awful.util.table.join(
@@ -316,50 +300,32 @@ for s = 1, screen.count() do
 			awful.button({ }, 5, function() awful.layout.inc(layouts, -1) end)
 	))
 
-	taglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, taglist.buttons)
+	taglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist.buttons)
 
-	tasklist[s] = awful.widget.tasklist(
-			function(c)
-				return awful.widget.tasklist.label.currenttags(c, s)
-			end,
-			tasklist.buttons
-	)
+	tasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist.buttons)
 
-	wibox[s] = awful.wibox({ position = wibox_position, screen = s })
-	local widgets_front = {
-		{
-			launcher,
-			taglist[s],
-			promptbox[s],
-			spacer,
-			layout = awful.widget.layout.horizontal.leftright
-		},
-		layoutbox[s],
-		spacer,
-	}
-	local widgets_middle = {}
-	for delightful_container_index, delightful_container_data in pairs(delightful_container.widgets) do
-		table.insert(widgets_middle, separator)
-		for widget_index, widget_data in pairs(delightful_container_data) do
-			if delightful_container_index > 1 then
-				table.insert(widgets_middle, spacer)
-			end
-			table.insert(widgets_middle, widget_data)
-			if delightful_container.icons[delightful_container_index] and delightful_container.icons[delightful_container_index][widget_index] then
-				table.insert(widgets_middle, delightful_container.icons[delightful_container_index][widget_index])
-			end
-			if delightful_container_index > 1 and widget_index == #delightful_container_data then
-				table.insert(widgets_middle, spacer)
-			end
-		end
-	end
-	local widgets_end = {
-		(s == 1 and #delightful_container.widgets > 0) and separator or nil,
-		s == 1 and systray or nil,
-		tasklist[s],
-		layout = awful.widget.layout.horizontal.rightleft,
-	}
-	wibox[s].widgets = awful.util.table.join(widgets_front, widgets_middle, widgets_end)
+	wibox_[s] = awful.wibox({ position = wibox_position, screen = s })
+
+	local front_layout = wibox.layout.fixed.horizontal()
+	local middle_layout = wibox.layout.flex.horizontal()
+	local end_layout = wibox.layout.fixed.horizontal()
+    front_layout:add(launcher)
+	front_layout:add(taglist[s])
+	front_layout:add(promptbox[s])
+    middle_layout:add(tasklist[s])
+    if s == 1 then
+        end_layout:add(systray)
+		if delightful_widgets then
+            delightful.utils.fill_wibox_container(delightful_widgets, delightful_config, end_layout)
+        end
+    end
+    end_layout:add(layoutbox[s])
+
+	local layout = wibox.layout.align.horizontal()
+	layout:set_left(front_layout)
+    layout:set_middle(middle_layout)
+    layout:set_right(end_layout)
+	wibox_[s]:set_widget(layout)
 end
 
 -- Mouse bindings
@@ -386,7 +352,7 @@ local globalkeys = awful.util.table.join(
 				if client.focus then client.focus:raise() end
 			end),
 		awful.key({ modkey,           }, 'w',      function() main_menu:show(true)                        end),
-		awful.key({ modkey,           }, 'q',      function() awful.menu.clients({width=245})             end),
+		awful.key({ modkey,           }, 'q',      function() awful.menu.clients({theme = {width=245}})   end),
 
 		-- Layout manipulation
 		awful.key({ modkey, 'Shift'   }, 'j',      function() awful.client.swap.byidx(  1)                end),
@@ -522,7 +488,7 @@ awful.rules.rules = {
 	{
 		rule       = { },
 		properties = {
-  					   border_width = beautiful.border_width,
+					   border_width = beautiful.border_width,
 					   border_color = beautiful.border_normal,
 					   focus        = true,
 					   keys         = clientkeys,
@@ -601,10 +567,10 @@ end
 
 -- Signals
 -- Signal function to execute when a new client appears.
-client.add_signal('manage',
+client.connect_signal('manage',
 		function(c, startup)
 			-- Enable sloppy focus
-			c:add_signal('mouse::enter',
+			c:connect_signal('mouse::enter',
 					function(c)
 						if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
 								and awful.client.focus.filter(c) then
@@ -627,5 +593,5 @@ client.add_signal('manage',
 		end
 )
 
-client.add_signal('focus',   function(c) c.border_color = beautiful.border_focus  end)
-client.add_signal('unfocus', function(c) c.border_color = beautiful.border_normal end)
+client.connect_signal('focus',   function(c) c.border_color = beautiful.border_focus  end)
+client.connect_signal('unfocus', function(c) c.border_color = beautiful.border_normal end)

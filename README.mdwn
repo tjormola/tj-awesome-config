@@ -1,7 +1,7 @@
 # My configuration for Awesome
 
 This distribution includes my configuration for
-[Awesome](http://awesome.naquadah.org) window manager.
+[Awesome](http://awesome.naquadah.org) 3.5.x window manager.
 
 Home page for the Awesome configuration is at
 <http://solitudo.net/software/awesome/config/>. The configuration is also listed at the
@@ -94,6 +94,6 @@ at <http://scm.solitudo.net/gitweb/public/tj-awesome-config.git>.
 
 # Copyright and licensing
 
-Copyright: © 2011 Tuomas Jormola <tj@solitudo.net> <http://solitudo.net>
+Copyright: © 2011-2016 Tuomas Jormola <tj@solitudo.net> <http://solitudo.net>
 
 Licensed under the terms of the [GNU General Public License Version 2.0](http://www.gnu.org/licenses/gpl-2.0.html).
