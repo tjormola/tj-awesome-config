@@ -309,22 +309,22 @@ for s = 1, screen.count() do
 	local front_layout = wibox.layout.fixed.horizontal()
 	local middle_layout = wibox.layout.flex.horizontal()
 	local end_layout = wibox.layout.fixed.horizontal()
-    front_layout:add(launcher)
+	front_layout:add(launcher)
 	front_layout:add(taglist[s])
 	front_layout:add(promptbox[s])
-    middle_layout:add(tasklist[s])
-    if s == 1 then
-        end_layout:add(systray)
+	middle_layout:add(tasklist[s])
+	if s == 1 then
+	    end_layout:add(systray)
 		if delightful_widgets then
-            delightful.utils.fill_wibox_container(delightful_widgets, delightful_config, end_layout)
-        end
-    end
-    end_layout:add(layoutbox[s])
+	        delightful.utils.fill_wibox_container(delightful_widgets, delightful_config, end_layout)
+	    end
+	end
+	end_layout:add(layoutbox[s])
 
 	local layout = wibox.layout.align.horizontal()
 	layout:set_left(front_layout)
-    layout:set_middle(middle_layout)
-    layout:set_right(end_layout)
+	layout:set_middle(middle_layout)
+	layout:set_right(end_layout)
 	wibox_[s]:set_widget(layout)
 end
 
