@@ -134,9 +134,8 @@ function tj_local_config()
     end
 end
 
-function choose_theme(theme)
-    local config = awful.util.getdir('config')
-    awful.util.spawn(string.format('ln -sfn %s/themes/%s %s/current_theme', config, theme, config))
+function choose_theme(theme_dir)
+    awful.util.spawn(string.format('ln -sfn "%s" "%s/current_theme"', theme_dir, awful.util.getdir('config')))
     awesome.restart()
 end
 
@@ -167,16 +166,21 @@ end
 
 function build_theme_menu()
     local menu = {}
-    local themes_dir = string.format('%s/themes', awful.util.getdir('config'))
-    local themes_stat = posix.stat(themes_dir)
-    if themes_stat and themes_stat.type == 'directory' then
-        local theme_dirs = posix.dir(themes_dir)
-        for _, theme_name in pairs(theme_dirs) do
-            local theme_dir = string.format('%s/%s', themes_dir, theme_name)
-            local theme_stat = posix.stat(theme_dir)
-            if theme_stat and (theme_stat.type == 'directory' or theme_stat.type == 'link') and not theme_name:find('^\.\.?$') then
-                local item = { theme_name, function() choose_theme(theme_name) end }
-                table.insert(menu, item)
+    local sections = {
+        { title = 'User themes', dir = string.format('%s/themes', awful.util.getdir('config')) },
+        { title = 'System themes', dir = '/usr/share/awesome/themes' }
+    }
+    for  _, section in pairs(sections) do
+        local theme_base_stat = posix.stat(section.dir)
+        if theme_base_stat and theme_base_stat.type == 'directory' then
+            local theme_base_fh = posix.dir(section.dir)
+            for _, theme_name in pairs(theme_base_fh) do
+                local theme_dir = string.format('%s/%s', section.dir, theme_name)
+                local theme_stat = posix.stat(theme_dir)
+                if theme_stat and (theme_stat.type == 'directory' or theme_stat.type == 'link') and not theme_name:find('^\.\.?$') then
+                    local item = { theme_name, function() choose_theme(theme_dir) end }
+                    table.insert(menu, item)
+                end
             end
         end
     end
