@@ -24,6 +24,7 @@ local print       = print
 function tj_variables()
     terminal                   = 'gnome-terminal'
     freedesktop.utils.terminal = terminal
+    mixer_cmd                  = 'pavucontrol'
     tagnum                     = 4
     wibox_position             = 'top'
 end
