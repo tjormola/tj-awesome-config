@@ -25,6 +25,7 @@ function tj_variables()
     terminal                   = 'gnome-terminal'
     freedesktop.utils.terminal = terminal
     mixer_cmd                  = 'pavucontrol'
+    menu_width                 = 200
     tagnum                     = 4
     wibox_position             = 'top'
 end
@@ -206,7 +207,7 @@ function tj_menu_and_launcher()
         { 'System',       system_menu_items,               freedesktop.utils.lookup_icon({ icon = 'system'                    }) },
         { 'Terminal',     freedesktop.utils.terminal,      freedesktop.utils.lookup_icon({ icon = 'terminal'                  }) }
     }
-    local main_menu = awful.menu({ items = top_menu_items })
+    local main_menu = awful.menu({ items = top_menu_items, theme = { width = beautiful.menu_width or menu_width } })
     local launcher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = main_menu })
     return main_menu, launcher
 end
@@ -267,7 +268,7 @@ end
 
 function tj_globalkeys(modkey)
     local globalkeys = awful.util.table.join(
-    awful.key({ modkey,           }, 'q',      function() awful.menu.clients({theme = {width=245}})   end)
+    awful.key({ modkey,           }, 'q',      function() awful.menu.clients({ theme = { beautiful.menu_width or menu_width } }) end)
     )
     if local_globalkeys then
         globalkeys = awful.util.table.join(globalkeys, local_globalkeys)
