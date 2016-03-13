@@ -1,6 +1,6 @@
                           My configuration for Awesome
 
-   This distribution includes my configuration for [1]Awesome window
+   This distribution includes my configuration for [1]Awesome 3.5.x window
    manager.
 
    Home page for the Awesome configuration is at
@@ -89,20 +89,15 @@ lrwxrwxrwx 1 tj staff   21 Aug 24 10:13 xscreensaver -> /usr/bin/xscreensaver
                                   Installation
 
     1. $ mv ~/.config/awesome ~/.config/awesome-old
-    2. $ git clone git://scm.solitudo.net/tj-awesome-config.git
-       ~/.config/awesome
-    3. $ cd ~/.config/awesome && git submodule init
-    4. $ cd ~/.config/awesome && git submodule update
-    5. $ cd ~/.config/awesome/submodules/delightful && git submodule init
-    6. $ cd ~/.config/awesome/submodules/delightful && git submodule
-       update
-    7. $ cp ~/.config/awesome/rc.HOSTNAME.lua.sample
+    2. $ git clone --recursive
+       git://scm.solitudo.net/tj-awesome-config.git ~/.config/awesome
+    3. $ cp ~/.config/awesome/rc.HOSTNAME.lua.sample
        ~/.config/awesome/rc.$HOSTNAME.lua
-    8. $ vi ~/.config/awesome/rc.$HOSTNAME.lua
+    4. $ vi ~/.config/awesome/rc.$HOSTNAME.lua
 
                             Copyright and licensing
 
-   Copyright: © 2011 Tuomas Jormola [11]tj@solitudo.net
+   Copyright: © 2011-2016 Tuomas Jormola [11]tj@solitudo.net
    [12]http://solitudo.net
 
    Licensed under the terms of the [13]GNU General Public License Version
