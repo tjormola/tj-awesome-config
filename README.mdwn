@@ -84,11 +84,7 @@ at <http://scm.solitudo.net/gitweb/public/tj-awesome-config.git>.
 # Installation
 
 1. $ `mv ~/.config/awesome ~/.config/awesome-old`
-1. $ `git clone git://scm.solitudo.net/tj-awesome-config.git ~/.config/awesome`
-1. $ `cd ~/.config/awesome && git submodule init`
-1. $ `cd ~/.config/awesome && git submodule update`
-1. $ `cd ~/.config/awesome/submodules/delightful && git submodule init`
-1. $ `cd ~/.config/awesome/submodules/delightful && git submodule update`
+1. $ `git clone --recursive git://scm.solitudo.net/tj-awesome-config.git ~/.config/awesome`
 1. $ `cp ~/.config/awesome/rc.HOSTNAME.lua.sample ~/.config/awesome/rc.$HOSTNAME.lua`
 1. $ `vi ~/.config/awesome/rc.$HOSTNAME.lua`
 
