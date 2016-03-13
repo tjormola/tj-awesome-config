@@ -321,27 +321,11 @@ function tj_rules()
             properties = { floating     = true        }
         },
         {
-            rule       = { class        = 'Rhythmbox' },
-            properties = { floating     = true        }
-        },
-        {
-            rule       = { class        = 'Nautilus'  },
-            properties = { floating     = true        }
-        },
-        {
-            rule       = { class        = 'Firefox'   },
-            properties = { floating     = true        }
-        },
-        {
             rule       = { class        = 'Vmware'    },
             properties = { floating     = true        }
         },
         {
             rule       = { class        = 'Vncviewer' },
-            properties = { floating     = true        }
-        },
-        {
-            rule       = { class        = 'Steam'     },
             properties = { floating     = true        }
         },
         {
