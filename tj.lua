@@ -12,8 +12,9 @@
 --    - Almost default key bindings
 --    - Floating mode rules for many applications
 
-local awful       = require("awful")
-local beautiful   = require("beautiful")
+local awful       = require('awful')
+local beautiful   = require('beautiful')
+local gears       = require('gears')
 local freedesktop = { utils = require('freedesktop.utils'), menu = require('freedesktop.menu') }
 local debian      = { menu = require('debian.menu') }
 
@@ -167,26 +168,42 @@ function tj_wibox(s)
 end
 
 function build_theme_menu()
-    local menu = {}
+    local theme_menu = {}
     local sections = {
-        { title = 'User themes', dir = string.format('%s/themes', awful.util.getdir('config')) },
+        { title = 'User themes',   dir = string.format('%s/themes', awful.util.getdir('config')) },
         { title = 'System themes', dir = '/usr/share/awesome/themes' }
     }
     for  _, section in pairs(sections) do
+        local section_menu = nil
         local theme_base_stat = posix.stat(section.dir)
         if theme_base_stat and theme_base_stat.type == 'directory' then
             local theme_base_fh = posix.dir(section.dir)
+            local themes = {}
             for _, theme_name in pairs(theme_base_fh) do
                 local theme_dir = string.format('%s/%s', section.dir, theme_name)
-                local theme_stat = posix.stat(theme_dir)
-                if theme_stat and (theme_stat.type == 'directory' or theme_stat.type == 'link') and not theme_name:find('^\.\.?$') then
-                    local item = { theme_name, function() choose_theme(theme_dir) end }
-                    table.insert(menu, item)
+                local theme_dir_stat = posix.stat(theme_dir)
+                if theme_dir_stat and (theme_dir_stat.type == 'directory' or theme_dir_stat.type == 'link') and not theme_name:find('^\.\.?$') then
+                    local theme_file = string.format('%s/theme.lua', theme_dir)
+                    local theme_stat = posix.stat(theme_file)
+                    if theme_stat then
+                        table.insert(themes, theme_name)
+                    end
                 end
             end
+            gears.sort(themes)
+            for _, theme_name in pairs(themes) do
+                    if not section_menu then
+                        section_menu = {}
+                    end
+                    local theme_dir = string.format('%s/%s', section.dir, theme_name)
+                    table.insert(section_menu, { theme_name, function() choose_theme(theme_dir) end })
+            end
+        end
+        if section_menu then
+            table.insert(theme_menu, { section.title, section_menu })
         end
     end
-    return menu
+    return theme_menu
 end
 
 function tj_menu_and_launcher()
