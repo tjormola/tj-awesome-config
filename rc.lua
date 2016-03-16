@@ -92,7 +92,7 @@ end
 tags = {}
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = tj_tags(layouts[1])
+    tags[s] = tj_tags(layouts[4])
 end
 -- }}}
 
