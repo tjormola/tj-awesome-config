@@ -215,14 +215,14 @@ function tj_menu_and_launcher()
     }
     local awesome_menu_items = {
         { 'Themes',          build_theme_menu(),           freedesktop.utils.lookup_icon({ icon = 'preferences-desktop-theme' }) },
-        { 'Restart Awesome', awesome.restart,              freedesktop.utils.lookup_icon({ icon = 'gtk-refresh'               }) },
+        { 'Restart Awesome', awesome.restart,              freedesktop.utils.lookup_icon({ icon = 'view-refresh'              }) },
     }
     local top_menu_items = {
         { 'Applications', freedesktop.menu.new(),          freedesktop.utils.lookup_icon({ icon = 'start-here'                }) },
         { 'Debian',       debian.menu.Debian_menu.Debian,  freedesktop.utils.lookup_icon({ icon = 'debian-logo'               }) },
         { 'Awesome',      awesome_menu_items,              beautiful.awesome_icon                                                },
-        { 'System',       system_menu_items,               freedesktop.utils.lookup_icon({ icon = 'system'                    }) },
-        { 'Terminal',     freedesktop.utils.terminal,      freedesktop.utils.lookup_icon({ icon = 'terminal'                  }) }
+        { 'System',       system_menu_items,               freedesktop.utils.lookup_icon({ icon = 'computer'                  }) },
+        { 'Terminal',     freedesktop.utils.terminal,      freedesktop.utils.lookup_icon({ icon = 'utilities-terminal'        }) }
     }
     local main_menu = awful.menu({ items = top_menu_items, theme = { width = beautiful.menu_width or menu_width } })
     local launcher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = main_menu })
